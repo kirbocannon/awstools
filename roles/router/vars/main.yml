@@ -1,5 +1,18 @@
 ---
 
 routers_IOSv:
-  - {hostname: blah, 
-  	 ip_addr: 192.168.1.2}
+  - { hostname: blah,
+  	  ip_addr: 192.168.1.2,
+  	  switch_cnt: 6,
+  	  switch_models: [
+  	    switch1: ws-3850p-ts,
+  	    switch2: ws-3850t-ts,
+  	    switch3: ws-3850t-ts,
+  	    switch4: ws-3850t-ts,
+  	    switch5: ws-3850t-ts,
+  	    switch6: ws-3850t-ts,
+  	    switch7: ws-3850t-ts,
+  	    switch8: ws-3850t-ts,
+  	    switch9: ws-3850t-ts ]
+
+  	  }
