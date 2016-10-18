@@ -1,0 +1,14 @@
+---
+
+-
+  hosts: localhost # generate configuration files locally and don't push them to remote hosts
+  roles: # set role to router
+    - router
+#  vars:
+#    - test_routers:
+#      - { hostname: {{ inventory_hostname }} }
+
+  tasks: 
+    - name: create base configuration for Routers
+      template: src=roles/router/templates/routers.j2 dest=/etc/ansible/generated_templates/{{ item.hostname }}.cfg
+      with_items: "{{ routers_IOSv }}"

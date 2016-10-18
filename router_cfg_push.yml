@@ -1,0 +1,38 @@
+---
+
+-
+  hosts: Routers
+  user: cisco
+  connection: local
+
+  vars:
+    cli:
+      host: "{{ ansible_host }}"
+      username: cisco
+      password: cisco
+      transport: cli
+
+  tasks:
+    - name: change to proper hostname
+      ios_config:
+        lines: ['hostname {{ inventory_hostname }}']
+        backup: yes
+        match: line #default is line
+        provider: "{{ cli }}" 
+      register: result
+    
+    - assert:
+        that:
+          - "result.changed == false"
+         # - "'hostname {{ inventory_hostname }}' in result.updates"
+
+    - name: add access list 
+      ios_config:
+        lines:
+          - 10 permit ip host 1.1.1.1 any log
+          - 20 permit ip host 1.1.1.2 any log
+        parents: ip access-list extended test
+        before: no ip access-list extended test
+        match: line
+        provider: "{{ cli }}"
+

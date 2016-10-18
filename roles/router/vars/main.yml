@@ -1,0 +1,5 @@
+---
+
+routers_IOSv:
+  - {hostname: blah, 
+  	 ip_addr: 192.168.1.2}
