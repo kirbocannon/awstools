@@ -20,7 +20,7 @@
         match: line #default is line
         provider: "{{ cli }}" 
       register: result
-    
+
     - assert:
         that:
           - "result.changed == false"

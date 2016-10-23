@@ -5,12 +5,31 @@ service timestamps debug datetime msec localtime show-timezone
 service timestamps log datetime msec localtime show-timezone
 service password-encryption
 
+do switch 1 priority 15
 
 hostname {{ item.hostname }}
 
+{% for switch in item.switch_models -%}
+	switch {{ loop.index }} provision {{ switch.values()[0] }}
+{% endfor %}
+
 {% for switch in item.switch_models %}
+{% if '24' in switch.values()[0] %}
+interface range GigabitEthernet{{ loop.index }}/0/1-24
+ desc STANDARD ACCESS PORT
+ switchport access vlan 25
+ switchport mode access
+ switchport voice vlan 15
+ spanning-tree portfast
 
-caw
-
+{% elif '48' in switch.values()[0] %}
+interface range GigabitEthernet{{ loop.index }}/0/1-48
+ desc STANDARD ACCESS PORT
+ switchport access vlan 25
+ switchport mode access
+ switchport voice vlan 15
+ spanning-tree portfast
+ 
+{% endif %}
 {% endfor %}
 
