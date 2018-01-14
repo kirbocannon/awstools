@@ -31,13 +31,6 @@ parser_release_ip.add_argument('--private-ip', dest='private_ip', type =str, hel
 parser_release_ip.add_argument('--release-public', action='store_true', dest='release_public_ip', help='Specify this argument to release the public ip address as well', required=False)
 args = parser.parse_args()
 
-# Proxy server for calling out to AWS 
-proxy_server = 'proxy-ftc.ad.moodys.net'
-# Set proxy using monkey patching here. There's no easy way to set proxy in boto3 besides environment
-# variables, which may be too envasive 
-def _get_proxies(self, url):
-    return {'http': proxy_server, 'https': proxy_server}
-
 def calculate_private_ip(cidr, used_ips):
     """ Determines which IP address to assign by describing in-use ENI private IPs and comparing to available host ips in subnet.
         Also removes reserved amazon addresses from list of host addresses
@@ -212,8 +205,6 @@ def release_ip(instance, private_ip, release_public_ip=False):
          
 
 if __name__ == '__main__':
-    # set moody's proxy
-    botocore.endpoint.EndpointCreator._get_proxies = _get_proxies
     ec2_session = boto3.session.Session(profile_name=args.vpc_name)
     ec2 = ec2_session.client(service_name='ec2')
     instance = describe_instance(instance_name=args.instance_name, eth_number=args.eth_number)
