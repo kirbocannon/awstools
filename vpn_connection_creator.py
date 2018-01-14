@@ -5,7 +5,6 @@
 # Note that for static VPNs, the static route will automatically propagate to the route tables for VPC 
 # when VPN tunnel is up but you must enable route propagation on the route table first
 # Developer: Kenneth Buchanan
-# Email: kenneth.buchanan@moodys.com
 
 
 # add route map for all vrf bgp neighbors 
@@ -46,13 +45,6 @@ parser_vpn_delete.add_argument('--vpn-name', dest='vpn_name', type=str, help='Na
 parser_vpn_delete.add_argument('--no-prompt', dest='no_prompt_selected', action='store_true', help='No Prompt when you delete the VPN connection', 
                     required=False)
 args = parser.parse_args()
-
-# Proxy server for calling out to AWS 
-proxy_server = 'proxy-ftc.ad.moodys.net'
-# Set proxy using monkey patching here. There's no easy way to set proxy in boto3 besides environment
-# variables, which may be too envasive 
-def _get_proxies(self, url):
-    return {'http': proxy_server, 'https': proxy_server}
 
 def create_vpn_conn(vpc_name, public_ip, bgp_asn, cg_name, vpn_name, static=None):
     # Set default static routing to False. Check if user specified the static arg
@@ -189,8 +181,6 @@ def delete_vpn_conn(vpc_name, vpn_name, no_prompt_selected=False):
 
 
 if __name__ == '__main__':
-    # set moody's proxy
-    botocore.endpoint.EndpointCreator._get_proxies = _get_proxies
     ec2_session = boto3.session.Session(profile_name=args.vpc_name)
     ec2 = ec2_session.client(service_name='ec2')
     # if list subparser is selected
