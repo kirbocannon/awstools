@@ -5,7 +5,7 @@
 # tunnel 1 number, tunnel 2 number, private ip address of interface to source on each tunnel, and endpoint name.  
 # VGW: Refers to AWS Router side
 # Developer: Kenneth Buchanan
-# Email: kenneth.buchanan@moodys.com
+
 
 from string import Template
 import json
@@ -37,13 +37,6 @@ args = parser.parse_args()
 # set base config file and new config file based on user choice of endpoint name
 base_cfg_filename = "RXXX00XXXX-AWS-CSR-BASE-CFG.txt"
 new_cfg_filename = "{}-AWS-CSR-CFG-CONVERTED.txt".format(args.vpn_name.upper())
-
-# Proxy server for calling out to AWS 
-proxy_server = 'proxy-ftc.ad.moodys.net'
-# Set proxy using monkey patching here. There's no easy way to set proxy in boto3 besides environment
-# variables, which may be too envasive 
-def _get_proxies(self, url):
-    return {'http': proxy_server, 'https': proxy_server }
 
 def generate_cfg(vpc_name, vpn_name, tun_one_id, tun_two_id, rd_num, remote_as, base_cfg_filename, new_cfg_filename, prepend_asn=False):
     vars = dict()
@@ -102,8 +95,6 @@ def generate_cfg(vpc_name, vpn_name, tun_one_id, tun_two_id, rd_num, remote_as, 
         print("Check to see that your resource-name is correct and you have access to AWS API")
 
 if __name__ == '__main__':
-    # set moody's proxy
-    botocore.endpoint.EndpointCreator._get_proxies = _get_proxies
     # specify csr ip
     host_ip = api.host_ip(args.host_ip)
     # Log into router and calculate tunnels to use
